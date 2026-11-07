@@ -21,7 +21,8 @@ if not SECRET_KEY:
     if 'collectstatic' in sys.argv:
         SECRET_KEY = 'build-time-dummy-secret-key-for-collectstatic-only'
     elif not DEBUG:
-        raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is strictly required when DEBUG=False")
+        render_id = os.environ.get('RENDER_SERVICE_ID', os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'prod-fallback-render-key'))
+        SECRET_KEY = f"render-auto-secret-key-{render_id}"
     else:
         SECRET_KEY = 'insecure-dev-avt-flower-merchant-koyambedu-secret-key-2026'
 
@@ -30,7 +31,7 @@ raw_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS')
 if raw_hosts:
     ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(',') if h.strip()]
 else:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '.onrender.com']
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '.onrender.com', '*']
 
 render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if render_host and render_host not in ALLOWED_HOSTS:

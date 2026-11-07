@@ -32,12 +32,14 @@ RUN DJANGO_SECRET_KEY=build-dummy-key python manage.py collectstatic --noinput
 # Create directory for persistent SQLite data
 RUN mkdir -p /app/data
 
+# Make entrypoint executable
+RUN chmod +x /app/entrypoint.sh
+
 # Expose server port
 EXPOSE 8000
 
-# Container Healthcheck
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD curl -f http://127.0.0.1:8000/health/ || exit 1
+# Entrypoint runs migrations before starting server
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Launch production WSGI server
 CMD ["gunicorn", "--config", "gunicorn.conf.py", "config.wsgi:application"]

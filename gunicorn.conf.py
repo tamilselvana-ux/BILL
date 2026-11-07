@@ -1,11 +1,13 @@
 import multiprocessing
 import os
 
-bind = f"{os.environ.get('HOST', '0.0.0.0')}:{os.environ.get('PORT', '8000')}"
-workers = int(os.environ.get('GUNICORN_WORKERS', max(2, multiprocessing.cpu_count())))
-threads = int(os.environ.get('GUNICORN_THREADS', 4))
+port = os.environ.get('PORT', '8000')
+bind = f"0.0.0.0:{port}"
+# Keep workers low (2) so container stays well within 512MB RAM free-tier limits
+workers = int(os.environ.get('GUNICORN_WORKERS', '2'))
+threads = int(os.environ.get('GUNICORN_THREADS', '4'))
 worker_class = 'gthread'
-timeout = 60
+timeout = 120
 keepalive = 5
 
 accesslog = '-'
