@@ -18,9 +18,12 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 if not SECRET_KEY:
-    if not DEBUG:
+    if 'collectstatic' in sys.argv:
+        SECRET_KEY = 'build-time-dummy-secret-key-for-collectstatic-only'
+    elif not DEBUG:
         raise ImproperlyConfigured("DJANGO_SECRET_KEY environment variable is strictly required when DEBUG=False")
-    SECRET_KEY = 'insecure-dev-avt-flower-merchant-koyambedu-secret-key-2026'
+    else:
+        SECRET_KEY = 'insecure-dev-avt-flower-merchant-koyambedu-secret-key-2026'
 
 # Host Configuration - defaults strictly to localhost/127.0.0.1 and .onrender.com
 raw_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS')

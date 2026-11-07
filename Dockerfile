@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 COPY . /app/
 
 # Collect static files with WhiteNoise
-RUN python manage.py collectstatic --noinput
+RUN DJANGO_SECRET_KEY=build-dummy-key python manage.py collectstatic --noinput
 
 # Create directory for persistent SQLite data
 RUN mkdir -p /app/data
